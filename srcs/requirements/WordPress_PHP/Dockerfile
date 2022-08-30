@@ -1,13 +1,16 @@
-FROM node:12.16.3
+FROM debian:buster
 
-WORKDIR /code
+RUN apt-get update \
+    && apt-get upgrade 
 
-ENV PORT 443
+RUN apt-get install -y php7.3-fpm php7.3-mbstring php7.3-mysql php7.3-gd
 
-COPY package.json /code/package.json
+COPY ./tools/php.ini /etc/php/7.3/fpm \
+    && ./tools/php-fpm.conf /etc/php/7.3/fpm \
+    && ./tools/www.conf /etc/php/7.3/fpm/pool.d/
 
-RUN npm install
+EXPOSE 9000
 
-COPY . /code
+RUN mkdir -p /run/php
 
-CMD [ "node", "src/server.js" ]
+CMD ["/usr/sbin/php-fpm7.3", "--nodaemonize"]
