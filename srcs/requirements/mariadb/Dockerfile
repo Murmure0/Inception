@@ -1,5 +1,9 @@
-FROM alpine:3.15.5
+FROM debien:buster
 
+RUN apt-get update \
+    && apt-get upgrade 
+
+    
 WORKDIR /code
 
 ENV PORT 3306

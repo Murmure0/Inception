@@ -1,24 +1,42 @@
-# version: '2'
+version: "3"
 
-# services:
-#     web:
-#         build:
-#          context: .
-#          dockerfile: Dockerfile
-#         container_name: web
-#         ports:
-#          - "8080:80"
+services:
+  nginx:
+    build: 
+      context: ./requirements/nginx
+    # depends_on:
+    #   - wordpress
+    ports:
+      - "80:443"
+    networks:
+      - internalnetwork
+    restart: always
+    volumes:
+      - php_nginx:/var/www/html
+    container_name: nginx
 
-#     db:
-#         images: mongo:3.6.1
-#         container_name: db
-#         volumes:
-#          - mongodb:/data/db
-#          - mondodb_config:/data/configdb
-#         ports:
-#          - 27017:27017
-#         command: mongod
+    wordpress:
+     container_name: wordpress
+     depends_on: mariadb
+     volumes:
+      - mariadb-volume:/var/lib/mysql
+     networks:
+      - internalnetwork
+     environment:
+      - MARIADB_ROOT_PWD=${MARIADB_ROOT_PWD}
+      - MARIADB_DB=${MARIADB_DB}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PWD=${MARIADB_PWD}
+     restart: unless-stopped
     
-# volumes:
-#  mongodb:
-#  mondodb_config:
+networks:
+  internalnetwork:
+
+volumes:
+ php_nginx:
+        driver: local
+        driver_opts:
+            type: volume
+            o: bind
+            device: /var/
+            
