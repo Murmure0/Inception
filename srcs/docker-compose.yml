@@ -6,8 +6,8 @@ services:
     image: img_mariadb
     volumes:
       - mariadb-volume:/var/lib/mysql
-    # build:
-    #   context: ./requirements/mariadb
+    build:
+      context: ./requirements/mariadb
     networks:
       - internal-network
     environment:
@@ -20,8 +20,8 @@ services:
   wordpress:
     container_name: wordpress
     image: img_wordpress
-    # build:
-    #   context: ./requirements/wordpress
+    build:
+      context: ./requirements/WordPress_PHP
     depends_on: 
       - mariadb
     volumes:
@@ -47,16 +47,15 @@ services:
   nginx:
     container_name: nginx
     image: img_nginx
-    # build: 
-    #   context: ./requirements/nginx
+    build: 
+      context: ./requirements/nginx
     depends_on:
       - wordpress
     ports:
-      - "80:443"
+      - "443:443"
     networks:
       - internal-network
     volumes:
-      - php_nginx:/var/www/html
       - wordpress-volume:/var/www/wordpress
     restart: always
 

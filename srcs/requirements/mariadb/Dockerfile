@@ -1,13 +1,13 @@
-FROM debien:buster
+FROM debian:buster
 
 RUN apt-get update \
     && apt-get upgrade 
 
-RUN apt-get install -y vim mariadb mariadb-client \
-    mkdir -p /var/lib mysqld /run/mysqld
+RUN apt-get install -y mariadb-server gettext-base
+RUN mkdir -p /var/lib mysqld /run/mysqld
 
-COPY ./tools/creat_db_.sql /tmp/create_db.sql \
-    ./tools/entrypoint.sh ./
+COPY ./tools/creat_db_.sql /tmp/create_db.sql 
+COPY ./tools/entrypoint.sh ./
 
 RUN chmod +x ./entryoint.sh
 
