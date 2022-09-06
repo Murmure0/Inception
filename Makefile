@@ -5,9 +5,11 @@ all:
 stop:
 	docker-compose -f srcs/docker-compose.yml down
 
-clean:
+clean: stop
 	docker system prune -af --volumes
 
 fclean: stop clean
 
-.PHONY:all stop clean
+re: fclean all
+
+.PHONY: all stop clean fclean re

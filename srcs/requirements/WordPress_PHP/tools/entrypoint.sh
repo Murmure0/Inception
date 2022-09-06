@@ -14,7 +14,7 @@ fi
 
 # Enter if file doesn't exist yet
 if [ ! -f "wp-config.php" ]; then
-	cp /config/wp-config ./wp-config.php
+	cp /config/wp-config.php ./wp-config.php
 
 	# We have to wait a bit or else the next steps will be skipped
 	# In the meantime, connection to database is happening

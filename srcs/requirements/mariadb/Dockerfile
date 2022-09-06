@@ -3,15 +3,20 @@ FROM debien:buster
 RUN apt-get update \
     && apt-get upgrade 
 
-    
-WORKDIR /code
+RUN apt-get install -y vim mariadb mariadb-client \
+    mkdir -p /var/lib mysqld /run/mysqld
 
-ENV PORT 3306
+COPY ./tools/creat_db_.sql /tmp/create_db.sql \
+    ./tools/entrypoint.sh ./
 
-COPY package.json /code/package.json
+RUN chmod +x ./entryoint.sh
 
-RUN npm install
+COPY ./tools/mariadb-server.cnf /etc/my.cnf.d/
 
-COPY . /code
+RUN mariadb-install-db --datadir=/var/lib/mysql \
+        --auth-root-authentification-method=normal
 
-CMD [ "node", "src/server.js" ]
+RUN chown -R mysql:mysql /var/lib/mysql \
+    chown -R mysql:mysql /run/mysqld
+
+ENTRYPOINT [ "sh", "entrypoint.sh" ]

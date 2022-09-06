@@ -1,42 +1,78 @@
 version: "3"
 
 services:
-  nginx:
-    build: 
-      context: ./requirements/nginx
-    # depends_on:
-    #   - wordpress
-    ports:
-      - "80:443"
-    networks:
-      - internalnetwork
-    restart: always
+  mariadb:
+    container_name: mariadb
+    image: img_mariadb
     volumes:
-      - php_nginx:/var/www/html
-    container_name: nginx
-
-    wordpress:
-     container_name: wordpress
-     depends_on: mariadb
-     volumes:
       - mariadb-volume:/var/lib/mysql
-     networks:
-      - internalnetwork
-     environment:
+    # build:
+    #   context: ./requirements/mariadb
+    networks:
+      - internal-network
+    environment:
       - MARIADB_ROOT_PWD=${MARIADB_ROOT_PWD}
       - MARIADB_DB=${MARIADB_DB}
       - MARIADB_USER=${MARIADB_USER}
       - MARIADB_PWD=${MARIADB_PWD}
-     restart: unless-stopped
-    
+    restart: always
+
+  wordpress:
+    container_name: wordpress
+    image: img_wordpress
+    # build:
+    #   context: ./requirements/wordpress
+    depends_on: 
+      - mariadb
+    volumes:
+     - wordpress-volume:/var/www/wordpress
+    networks:
+      - internal-network
+    environment: 
+      - WP_URL=${WP_URL}
+      - WP_DATABASE=${WP_DATABASE}
+      - WP_TITLE=${WP_TITLE}
+      - WP_ADMIN_USER=${WP_ADMIN_USER}
+      - WP_ADMIN_PWD=${WP_ADMIN_PWD}
+      - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
+      - WP_USER=${WP_USER}
+      - WP_USER_PWD=${WP_USER_PWD}
+      - WP_USER_EMAIL=${WP_USER_EMAIL}
+      - MARIADB_HOST=${MARIADB_HOST}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PWD=${MARIADB_PWD}
+      - MARIADB_DB=${MARIADB_DB}
+    restart: always
+
+  nginx:
+    container_name: nginx
+    image: img_nginx
+    # build: 
+    #   context: ./requirements/nginx
+    depends_on:
+      - wordpress
+    ports:
+      - "80:443"
+    networks:
+      - internal-network
+    volumes:
+      - php_nginx:/var/www/html
+      - wordpress-volume:/var/www/wordpress
+    restart: always
+
 networks:
-  internalnetwork:
+  internal-network:
 
 volumes:
- php_nginx:
-        driver: local
-        driver_opts:
-            type: volume
-            o: bind
-            device: /var/
-            
+  mariadb-volume:
+    driver: local
+    driver_opts:
+      device: /home/mberthet/data/database
+      type: volume
+      o: bind
+  wordpress-volume:
+    driver: local
+    driver_opts:
+      device: /home/mberthet/data/wordpress
+      type: volume
+      o: bind
