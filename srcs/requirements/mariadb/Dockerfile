@@ -1,9 +1,11 @@
-FROM debian:buster
+FROM alpine:3.14
 
-RUN apt-get update \
-    && apt-get upgrade 
+# Update packet manager
+RUN	apk update
 
-RUN apt-get install -y mariadb mariadb-client mariadb-server gettext-base
+# Install mariadb and mariadb-client
+RUN	apk add --no-cache --quiet --update mariadb mariadb-client vim
+
 RUN mkdir -p /var/lib mysqld /run/mysqld
 
 COPY ./tools/create_db.sql /tmp/create_db.sql 

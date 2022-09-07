@@ -1,11 +1,11 @@
-FROM debian:buster
+FROM	alpine:3.14
 
-RUN apt-get update \
-    && apt-get upgrade 
+# Update packet manager
+RUN		apk update
 
-RUN apt-get install -y curl bash vim \
-    apt-get -y mariadb-client \
-    apt-get install -y php7.3-fpm php7.3-phar php7.3-curl php7.3-json php7.3-fpm php7.3-mbstring php7.3-mysqli php7.3-gd php7.3-iconv
+RUN		apk add --no-cache --quiet --update curl bash vim
+RUN		apk add --no-cache --quiet --update mariadb-client
+RUN		apk add --no-cache --quiet --update php7.3-fpm php7.3-phar php7.3-curl php7.3-json php7.3-fpm php7.3-mbstring php7.3-mysqli php7.3-gd php7.3-iconv
 
 #Creating a WP directory
 RUN mkdir -p /var/www/wordpress
