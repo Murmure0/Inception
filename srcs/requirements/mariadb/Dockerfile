@@ -9,7 +9,7 @@ RUN mkdir -p /var/lib mysqld /run/mysqld
 COPY ./tools/create_db.sql /tmp/create_db.sql 
 COPY ./tools/entrypoint.sh ./
 
-RUN chmod +x ./entryoint.sh
+RUN chmod +x ./entrypoint.sh
 
 COPY ./tools/mariadb-server.cnf /etc/my.cnf.d/
 
