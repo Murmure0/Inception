@@ -52,7 +52,7 @@ services:
     depends_on:
       - wordpress
     ports:
-      - "443:443"
+      - "80:443"
     networks:
       - internal-network
     volumes:

@@ -9,7 +9,7 @@ RUN apt-get install -y nginx openssl
 RUN mkdir -p /etc/nginx/ssl \
     && mkdir -p /etc/nginx/sites-enabled/
 
-COPY ./tools/wordpress.conf /etc/nginx/sites-enabled/
+COPY ./tools/nginx.conf /etc/nginx/sites-enabled/
 
 RUN openssl req -x509 -nodes \
     -days 30 -subj "/C=BE/ST=Belgium/L=Brussels/o=42Network/OU=s19/CN=localhost" \

@@ -21,13 +21,13 @@ WORKDIR /var/www/wordpress
 # Copy the configuration files for php
 COPY ./tools/php.ini /etc/php/7.3/fpm 
 COPY ./tools/php-fpm.conf /etc/php/7.3/fpm 
-COPY ./tools/www.conf /etc/php/7.3/fpm/pool.d/
+COPY ./tools/wp-config.php /etc/php/7.3/fpm/
 
 # Copy config file
 COPY	tools/wp-config.php /config/wp-config.php
 
 # Copy entrypoint script and add execution rights
-COPY	./scripts/entrypoint.sh /tmp/entrypoint.sh
+COPY	./tools/entrypoint.sh /tmp/entrypoint.sh
 RUN		chmod +x /tmp/entrypoint.sh
 
 # Execute script with entrypoint to make sure it's never ignored
