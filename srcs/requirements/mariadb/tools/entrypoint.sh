@@ -8,7 +8,7 @@ if [ $? -ne 0 ]; then
     	sleep 1
 	done
 
-	eval "echo \"$(cat /tmp/create_db.sql)\"" | mariadb
+	eval "echo \"$(cat /tmp/create_db.sql)\"" | mariadb -u root
 	touch .setup
 fi
 # Start mysql in safe mode normally
