@@ -6,7 +6,7 @@ RUN apt-get update \
 RUN apt-get install -y mariadb-server gettext-base
 RUN mkdir -p /var/lib mysqld /run/mysqld
 
-COPY ./tools/creat_db_.sql /tmp/create_db.sql 
+COPY ./tools/creat_db.sql /tmp/create_db.sql 
 COPY ./tools/entrypoint.sh ./
 
 RUN chmod +x ./entryoint.sh
