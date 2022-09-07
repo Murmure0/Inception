@@ -18,7 +18,7 @@ COPY ./tools/mariadb-server.cnf /etc/my.cnf.d/
 RUN mariadb-install-db --datadir=/var/lib/mysql \
         --auth-root-authentication-method=normal
 
-RUN chown -R mysql:mysql /var/lib/mysql \
-    chown -R mysql:mysql /run/mysqld
+RUN chown -R mysql:mysql /var/lib/mysql
+RUN chown -R mysql:mysql /run/mysqld
 
 ENTRYPOINT [ "sh", "entrypoint.sh" ]

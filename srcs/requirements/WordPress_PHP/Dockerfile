@@ -5,8 +5,8 @@ RUN		apk update
 
 RUN		apk add --no-cache --quiet --update curl bash vim
 RUN		apk add --no-cache --quiet --update mariadb-client
-RUN		apk add --no-cache --quiet --update php7.3-fpm php7.3-phar php7.3-curl php7.3-json php7.3-fpm php7.3-mbstring php7.3-mysqli php7.3-gd php7.3-iconv
-
+RUN		apk add --no-cache --quiet --update php7 php-phar \
+			php-json php-curl php-fpm php-mysqli php-iconv
 #Creating a WP directory
 RUN mkdir -p /var/www/wordpress
 
