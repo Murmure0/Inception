@@ -19,9 +19,9 @@ RUN		wp core download --path=/var/www/wordpress
 WORKDIR /var/www/wordpress
 
 # Copy the configuration files for php
-COPY ./tools/php.ini /etc/php/7.3/fpm \
-    && ./tools/php-fpm.conf /etc/php/7.3/fpm \
-    && ./tools/www.conf /etc/php/7.3/fpm/pool.d/
+COPY ./tools/php.ini /etc/php/7.3/fpm 
+COPY ./tools/php-fpm.conf /etc/php/7.3/fpm 
+COPY ./tools/www.conf /etc/php/7.3/fpm/pool.d/
 
 # Copy config file
 COPY	tools/wp-config.php /config/wp-config.php
