@@ -3,7 +3,7 @@ FROM debian:buster
 RUN apt-get update \
     && apt-get upgrade 
 
-RUN apt-get install -y mariadb-server gettext-base
+RUN apt-get install -y mariadb mariadb-client mariadb-server gettext-base
 RUN mkdir -p /var/lib mysqld /run/mysqld
 
 COPY ./tools/create_db.sql /tmp/create_db.sql 
