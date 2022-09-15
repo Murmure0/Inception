@@ -1,40 +1,19 @@
-# FROM alpine:3.14
-
-# # Update packet manager
-# RUN	apk update
-
-# # Install mariadb and mariadb-client
-# RUN	apk add --no-cache --quiet --update mariadb mariadb-client vim
-
-# RUN mkdir -p /var/lib/mysqld /run/mysqld
-
-# COPY ./tools/create_db.sql /tmp/create_db.sql 
-# COPY ./tools/entrypoint.sh ./
-
-# RUN chmod +x ./entrypoint.sh
-
-# COPY ./tools/mariadb-server.cnf /etc/my.cnf.d/
-
-# RUN mariadb-install-db --datadir=/var/lib/mysql \
-#         --auth-root-authentication-method=normal
-
-# RUN chown -R mysql:mysql /var/lib/mysql
-# RUN chown -R mysql:mysql /run/mysqld
-
-# ENTRYPOINT [ "sh", "entrypoint.sh" ]
-
+#Installing and updating Debian Buster
 FROM debian:buster
+RUN apt-get update
+RUN apt-get upgrade -y
 
-RUN	apt-get update -y && \
-	apt-get upgrade -y && \
-	apt-get install -y mariadb-server gettext-base
+#MariaDB will be our database
+RUN apt-get install mariadb-server -y
 
-WORKDIR /tmp/mariadb/
+#Copy database creation and configutation
+COPY ./tools/config.sql /tmp/config.sql
 
-COPY tools/my.cnf /etc/mysql
+#Copy more configuration details given in the .cnf
+COPY tools/mariadb.cnf /etc/mysql/
 
-COPY tools/script.sh /tmp/mariadb/
+#Copy .sh script to execute everything
+COPY ./tools/config.sh ./
 
-ENTRYPOINT ["sh", "/tmp/mariadb/script.sh"]
-
-CMD ["mysqld_safe"]
+# This execution of the  script is now the starting point
+ENTRYPOINT [ "sh", "config.sh" ]

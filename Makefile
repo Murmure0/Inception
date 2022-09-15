@@ -1,13 +1,15 @@
-
-
 all:
+	#Building all images
 	docker-compose -f srcs/docker-compose.yml build
+	#Creating folders for the external volumes (see docker-compose)
 	mkdir -p /home/mberthet/data
 	mkdir -p /home/mberthet/data/wordpress
 	mkdir -p /home/mberthet/data/database
+	#Adding adresses refering to localhost
 	chmod 777 /etc/hosts
 	echo "127.0.0.1 mberthet.42.fr" >> /etc/hosts
 	echo "127.0.0.1 www.mberthet.42.fr" >> /etc/hosts
+	#Running every coontainers (will use detach to make them as background tasks)
 	docker-compose -f srcs/docker-compose.yml up --detach
 
 build:

@@ -1,7 +1,0 @@
-[client-server]
-# Uncomment these if you want to use a nonstandard connection to MariaDB
-#socket=/tmp/mysql.sock
-port=3306
-
-[galera]
-bind-address=0.0.0.0

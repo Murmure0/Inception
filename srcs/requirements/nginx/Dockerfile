@@ -1,24 +1,27 @@
+#Installing and updating Debian Buster
 FROM debian:buster
+RUN	apt-get update -y 
+RUN apt-get upgrade -y
 
-#update packet manager, install nginx & openssl + upgrade them
-RUN apt-get update \
-    && apt-get upgrade 
+#Nginx will be our server. openSSL will allow us to communicate securely using TLS protocol (kind of SSL improved).
+RUN apt-get install nginx -y openssl
 
-RUN apt-get install -y nginx openssl 
+COPY tools/nginx.conf /etc/nginx/sites-enabled/default.conf
 
-RUN mkdir -p /etc/nginx/ssl \
-    && mkdir -p /etc/nginx/sites-enabled/
+# Create directory for the certificate and the key
+RUN mkdir -p /etc/ssl
 
-COPY ./tools/nginx.conf /etc/nginx/sites-enabled/
+# Generate certificate and key
+#	req = Creates and processes certificate requests
+#		-x509 = makes the certificate self-signed
+#		-nodes = makes the private key not encrypted
+#		-out $FILENAME = where to write the certificate	
+#		-keyout $FILENAME = where to write the private key
+#		-subj = set subject (me) infos 
+RUN 	openssl req -x509 -nodes \
+		-out /etc/ssl/nginx-selfsigned.crt \	
+		-keyout /etc/ssl/nginx-selfsigned.key \
+		-subj "/C=BE/ST=Belgium/L=Brussels/O=42/OU=19/CN=mberthet.42.fr/UID=mberthet"
 
-RUN openssl req -x509 -nodes \
-    -days 30 -subj "/C=BE/ST=Belgium/L=Brussels/o=42Network/OU=s19/CN=localhost" \
-    -newkey rsa:2048 \
-    -keyout /etc/nginx/ssl/nginx-selfsigned.key \
-    -out /etc/nginx/ssl/nginx-selfsigned.crt;
-
-# RUN echo "<?php phpinfo(); ?>" >> /var/www/html/info.php
-# EXPOSE 443
-#Keep running nginx in the forground, for inactive container would stop
-CMD ["nginx", "-g", "daemon off;"]
-#CMD nginx -g "daemon off;" 
+#daemon off -> make nginx run in the foreground
+CMD nginx -g "daemon off;"

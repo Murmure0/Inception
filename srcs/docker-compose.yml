@@ -1,67 +1,56 @@
-version: "3"
+version : "3.9"
 
+#Services that will be built and ran
 services:
   mariadb:
     container_name: mariadb
-    image: img_mariadb
+    build: ./requirements/mariadb
+    env_file: .env
+    image: mariadb
+    restart: unless-stopped
+    networks:
+      - inception_network
     volumes:
       - mariadb-volume:/var/lib/mysql
-    build:
-      context: ./requirements/mariadb
-    networks:
-      - internal-network
-    environment:
-      - MARIADB_ROOT_PWD=${MARIADB_ROOT_PWD}
-      - MARIADB_DB=${MARIADB_DB}
-      - MARIADB_USER=${MARIADB_USER}
-      - MARIADB_PWD=${MARIADB_PWD}
-    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "$MARIADB_USER", "-p$MARIADB_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   wordpress:
     container_name: wordpress
-    image: img_wordpress
-    build:
-      context: ./requirements/WordPress_PHP
-    depends_on: 
-      - mariadb
-    volumes:
-     - wordpress-volume:/var/www/wordpress
+    build: ./requirements/wordpress
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    env_file: .env
+    image: wordpress
+    restart: unless-stopped
     networks:
-      - internal-network
-    environment: 
-      - WP_URL=${WP_URL}
-      - WP_DATABASE=${WP_DATABASE}
-      - WP_TITLE=${WP_TITLE}
-      - WP_ADMIN_USER=${WP_ADMIN_USER}
-      - WP_ADMIN_PWD=${WP_ADMIN_PWD}
-      - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
-      - WP_USER=${WP_USER}
-      - WP_USER_PWD=${WP_USER_PWD}
-      - WP_USER_EMAIL=${WP_USER_EMAIL}
-      - MARIADB_HOST=${MARIADB_HOST}
-      - MARIADB_USER=${MARIADB_USER}
-      - MARIADB_PWD=${MARIADB_PWD}
-      - MARIADB_DB=${MARIADB_DB}
-    restart: always
-
+      - inception_network
+    volumes:
+      - wordpress-volume:/var/www/html
+      
   nginx:
     container_name: nginx
-    image: img_nginx
-    build: 
-      context: ./requirements/nginx
+    build: ./requirements/nginx
     depends_on:
       - wordpress
-    ports:
-      - "80:443"
     networks:
-      - internal-network
+      - inception_network
+    ports:
+      - "443:443"
+    image: nginx
+    restart: unless-stopped
     volumes:
-      - wordpress-volume:/var/www/wordpress
-    restart: always
+      - "wordpress-volume:/var/www/html"
 
+#Name of the network used by the containers to communicate
 networks:
-  internal-network:
+  inception_network:
 
+#External volumes to configure for the use of the containers
 volumes:
   mariadb-volume:
     driver: local
